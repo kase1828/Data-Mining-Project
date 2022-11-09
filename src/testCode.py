@@ -19,10 +19,11 @@ df2 = df1[["date", "close", "Name"]]
 
 df2 = df2.pivot('date','Name', 'close').reset_index()
 
-
 corr_df = df2.corr(method='pearson')
 #reset symbol as index (rather than 0-X)
 corr_df.head().reset_index()
+
+
 
 
 #Generates a heatmap utilizing the correlation dataframe.
