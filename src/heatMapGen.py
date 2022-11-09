@@ -36,16 +36,16 @@ def corrHeatmap(numOfStocks, startPoint, corr_df):
     mask = np.zeros_like(corr_df)
     mask[np.triu_indices_from(mask)] = True
     #generate plot
-    seaborn.heatmap(corr_df, cmap='RdYlGn', vmax=1.0, vmin=-1.0 , mask = mask, linewidths=2.5)
+    seaborn.heatmap(corr_df, cmap='RdYlGn', vmax=1.0, vmin=-1.0 , mask = mask, linewidths=2.5, xticklabels=True, yticklabels=True)
     plt.yticks(rotation=0) 
     plt.xticks(rotation=90) 
     plt.title(corr_df.columns.name)
     plt.show()
 
-testCorr = getCorrTable(dfAll, "high")
+testCorr = getCorrTable(dfAll, "low")
 
 
-corrHeatmap(15, 0, testCorr, )
+corrHeatmap(50, 450, testCorr)
 
 print(testCorr.columns.name)
 
