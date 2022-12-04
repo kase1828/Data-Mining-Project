@@ -20,7 +20,8 @@ def create_dataset(df):
     return x,y 
 
 def getModelTrain(stockName, attribute, epochs_, batchSize_):
-    df = pd.read_csv('data/indv/' + stockName + '_data.csv')
+    #df = pd.read_csv('data/indv/' + stockName + '_data.csv')
+    df = pd.read_csv('data/sp_20yr.csv')
 
     df.set_index("date", inplace=True)
 
@@ -170,9 +171,9 @@ def predictPrice(stockName, attribute, modelName):
 
 
 
-getModelTrain('AMD','close', 50, 32)
+#getModelTrain('sp_20yr','close', 50, 32)
 
-predictPrice('AMD', 'close', 'AMD_by_close')
+predictPrice('AAPL', 'close', 'sp_20yr_by_close')
 
 
 

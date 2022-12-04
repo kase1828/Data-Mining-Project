@@ -7,7 +7,7 @@ from sklearn.metrics import precision_score
 from keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense, Dropout
 
-def backtest(data, model, predictors, start=10, step=15):
+def backtest(data, model, predictors, start=10, step=5):
     predictions = []
     # Loop over the dataset in increments
     for i in range(start, data.shape[0], step):
@@ -100,7 +100,8 @@ def predictMulti(stockName):
     full_predictors = predictors + ["weekly_mean", "quarterly_mean", "annual_mean", "annual_weekly_mean", "annual_quarterly_mean", "open_close_ratio", "high_close_ratio", "low_close_ratio", "weekly_trend"]
     predictions = backtest(data.iloc[365:], model, full_predictors)
 
-    print(precision_score(predictions["Target"], predictions["Predictions"]))
+    print("Prediction percentage:")
+    print(precision_score(predictions["Target"], predictions["Predictions"]) * 100)
 
     print(predictions["Predictions"].value_counts())
 
