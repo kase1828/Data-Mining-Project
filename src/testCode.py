@@ -14,25 +14,18 @@ df1.dataframeName = 'all_stocks_5yr.csv'
 
 df2 = df1[["date", "close", "Name", "volume"]]
 
+# individual years top 50
 df2['max'] = df2.groupby('Name')['volume'].transform('max')
-
 df2 = df2.sort_values(["max","volume"], ascending=False).drop('max', axis=1)
-
 df2 = df2.head(1259*50)
-
+df2 = df2.loc[df2["date"].str.startswith('2018', na=False)]
 df2 = df2[["date", "close", "Name"]].reset_index(drop=True)
-
-print(df2)
-
-#df2 = df2.head(1259*50)
 
 df2 = df2.pivot('date','Name', 'close')#.reset_index()
 
 corr_df = df2.corr(method='pearson')
 #reset symbol as index (rather than 0-X)
 corr_df.head().reset_index()
-
-
 
 
 #Generates a heatmap utilizing the correlation dataframe.
