@@ -7,17 +7,26 @@ import pandas as pd
 import seaborn
 
 
-
 # specify 'None' if want to read whole file
 # all_stocks_5yr.csv may have more rows in reality, but we are only loading/previewing the first 1000 rows
-df1 = pd.read_csv('data/all_stocks_5yr.csv', delimiter=',')
+df1 = pd.read_csv('../data/all_stocks_5yr.csv', delimiter=',')
 df1.dataframeName = 'all_stocks_5yr.csv'
 
+df2 = df1[["date", "close", "Name", "volume"]]
 
+df2['max'] = df2.groupby('Name')['volume'].transform('max')
 
-df2 = df1[["date", "close", "Name"]]
+df2 = df2.sort_values(["max","volume"], ascending=False).drop('max', axis=1)
 
-df2 = df2.pivot('date','Name', 'close').reset_index()
+df2 = df2.head(1259*50)
+
+df2 = df2[["date", "close", "Name"]].reset_index(drop=True)
+
+print(df2)
+
+#df2 = df2.head(1259*50)
+
+df2 = df2.pivot('date','Name', 'close')#.reset_index()
 
 corr_df = df2.corr(method='pearson')
 #reset symbol as index (rather than 0-X)
@@ -36,7 +45,7 @@ def corrHeatmap(numOfStocks, startPoint, corr_df):
     mask = np.zeros_like(corr_df)
     mask[np.triu_indices_from(mask)] = True
     #generate plot
-    seaborn.heatmap(corr_df, cmap='RdYlGn', vmax=1.0, vmin=-1.0 , mask = mask, linewidths=2.5)
+    seaborn.heatmap(corr_df, cmap='RdYlGn', vmax=1.0, vmin=-1.0 , mask = mask, linewidths=0, xticklabels=1, yticklabels=1)
     plt.yticks(rotation=0) 
     plt.xticks(rotation=90) 
     plt.show()
@@ -79,8 +88,4 @@ def plotScatterMatrix(df, plotSize, textSize):
 #plotCorrelationMatrix(df1, 8)
 #plotScatterMatrix(df3, 15, 10)
 
-corrHeatmap(10, 50, corr_df)
-
-
-
-
+corrHeatmap(50, 0, corr_df)
