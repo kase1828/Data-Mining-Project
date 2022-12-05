@@ -7,7 +7,7 @@ from sklearn.metrics import precision_score
 from keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense, Dropout
 
-def backtest(data, model, predictors, start=10, step=5):
+def backtest(data, model, predictors, start=5, step=10):
     predictions = []
     # Loop over the dataset in increments
     for i in range(start, data.shape[0], step):
@@ -31,8 +31,15 @@ def backtest(data, model, predictors, start=10, step=5):
     
     return pd.concat(predictions)
 
-def predictMulti(stockName):
-    df = pd.read_csv('data/indv/' + stockName + '_data.csv')
+
+#@Params:
+#string stockName: name of the stock to read data from
+#bool indv: If true, it will read from the indv stocks, if false it will read from data
+def predictMulti(stockName, indv):
+    if(indv):
+        df = pd.read_csv('data/indv/' + stockName + '_data.csv')
+    else:
+        df = pd.read_csv('data/' + stockName)
 
     df.set_index("date", inplace=True)
 
@@ -40,8 +47,8 @@ def predictMulti(stockName):
     data = df[["close"]]
     data = data.rename(columns = {'close':'Actual_Close'})
 
-    print("data:")
-    print(data)
+    #print("data:")
+    #print(data)
 
     # Setup our target
     data["Target"] = df.rolling(2).apply(lambda x: x.iloc[1] > x.iloc[0])["close"]
@@ -50,63 +57,147 @@ def predictMulti(stockName):
 
     predictors = ['open', 'high', 'low', 'close', 'volume']
     data = data.join(df[predictors]).iloc[1:]
-    print("data:")
-    print(data)
 
-    dataset_train = data.iloc[:-100]
-    dataset_test = data.iloc[-100:]
-
-    model = RandomForestClassifier(n_estimators=100, min_samples_split=100, random_state=1)
-
-    model.fit(dataset_train[predictors], dataset_train["Target"])
-
-    preds = model.predict(dataset_test[predictors])
-    preds = pd.Series(preds, index=dataset_test.index)
-    precision_score(dataset_test["Target"], preds)
-
-    print(precision_score(dataset_test["Target"], preds))
-
-    comparison = pd.concat({"Target": dataset_test["Target"],"Predictions": preds}, axis=1)
-    comparison.plot()
-    #plt.show()
-    
-    predictions = backtest(data, model, predictors)
-
-    predictions["Predictions"].value_counts()
-    print(predictions)
-
-    print(predictions["Predictions"].value_counts())
-    print(predictions["Target"].value_counts())
-    
-    print(precision_score(predictions["Target"], predictions["Predictions"]))
-
+    ###
     weekly_mean = data.rolling(7).mean()
     quarterly_mean = data.rolling(90).mean()
-    annual_mean = data.rolling(365).mean()
     weekly_trend = data.shift(1).rolling(7).mean()["Target"]
 
     data["weekly_mean"] = weekly_mean["close"] / data["close"]
     data["quarterly_mean"] = quarterly_mean["close"] / data["close"]
-    data["annual_mean"] = annual_mean["close"] / data["close"]
 
-    data["annual_weekly_mean"] = data["annual_mean"] / data["weekly_mean"]
-    data["annual_quarterly_mean"] = data["annual_mean"] / data["quarterly_mean"]
     data["weekly_trend"] = weekly_trend
 
     data["open_close_ratio"] = data["open"] / data["close"]
     data["high_close_ratio"] = data["high"] / data["close"]
     data["low_close_ratio"] = data["low"] / data["close"]
 
-    full_predictors = predictors + ["weekly_mean", "quarterly_mean", "annual_mean", "annual_weekly_mean", "annual_quarterly_mean", "open_close_ratio", "high_close_ratio", "low_close_ratio", "weekly_trend"]
-    predictions = backtest(data.iloc[365:], model, full_predictors)
 
-    print("Prediction percentage:")
+    print("Full data: ")
+    print(data)
+    full_predictors = predictors + ["weekly_mean", "quarterly_mean", "open_close_ratio", "high_close_ratio", "low_close_ratio", "weekly_trend"]
+    ###
+
+    model_predictors = predictors + ["open_close_ratio", "high_close_ratio", "low_close_ratio"]
+    
+
+    dataset_train = data.iloc[:-100]
+    dataset_test = data.iloc[-100:]
+
+    model = RandomForestClassifier(n_estimators=200, min_samples_split=2, random_state=1)
+
+    ###
+    model.fit(dataset_train[model_predictors], dataset_train["Target"]) ##
+    ###
+
+    #model.fit(dataset_train[predictors], dataset_train["Target"])
+
+    preds = model.predict(dataset_test[model_predictors]) ##
+    preds = pd.Series(preds, index=dataset_test.index)
+    precision_score(dataset_test["Target"], preds)
+
+    print(precision_score(dataset_test["Target"], preds))
+
+    #plt.show()
+    ###
+    predictions = backtest(data.iloc[90:], model, full_predictors)
+    ###
+
+    #predictions = backtest(data, model, predictors)
+
+    # weekly_mean = data.rolling(7).mean()
+    # quarterly_mean = data.rolling(90).mean()
+    # weekly_trend = data.shift(1).rolling(7).mean()["Target"]
+
+    # data["weekly_mean"] = weekly_mean["close"] / data["close"]
+    # data["quarterly_mean"] = quarterly_mean["close"] / data["close"]
+
+    # data["weekly_trend"] = weekly_trend
+
+    # data["open_close_ratio"] = data["open"] / data["close"]
+    # data["high_close_ratio"] = data["high"] / data["close"]
+    # data["low_close_ratio"] = data["low"] / data["close"]
+
+
+    # print("Full data: ")
+    # print(data)
+    # full_predictors = predictors + ["weekly_mean", "quarterly_mean", "open_close_ratio", "high_close_ratio", "low_close_ratio", "weekly_trend"]
+
+    # predictions = backtest(data.iloc[90:], model, full_predictors)
+
+
+
+    print("Prediction percentage after backtesting:")
     print(precision_score(predictions["Target"], predictions["Predictions"]) * 100)
 
     print(predictions["Predictions"].value_counts())
 
 
-
     
 
-predictMulti('AMD')
+    predictors += ['Actual_Close']
+
+    #predictions = predictions.join(data[predictors])
+    print(predictions)
+    predictions = predictions.join(dataset_test[predictors])
+    
+    initialMoney = 1000
+    totalMoney = initialMoney
+    shares = 0
+    trades = 0
+
+    sell = predictions[['Actual_Close','Predictions']]
+    sell = sell[-100:]
+    #print(dataset_test)
+    #print(sell)
+
+    print(sell)
+
+
+
+    for i in range(len(sell)):
+        if(i % 5 == 0):
+            print("Total money: " + str(totalMoney))
+        if(sell.iloc[i, 1] == 1.0):
+            money = totalMoney // 2
+            tradeNow = money // sell.iloc[i,0]
+            totalMoney -= (tradeNow * sell.iloc[i,0])
+            shares += tradeNow
+            trades += 1
+            # totalMoney -= sell.iloc[i, 0]
+            # shares += 1
+            # trades += 1
+        if(sell.iloc[i, 1] == 0.0 and shares > 0):
+            totalMoney += (shares * sell.iloc[i, 0])
+            trades += 1
+            shares = 0
+            # totalMoney += (sell.iloc[i, 0])
+            # shares -= 1
+            # trades += 1
+    if(shares > 0):
+        totalMoney += (shares * sell.iloc[-1,0])
+        shares = 0
+        trades += 1
+            
+
+    print("Total money: " + str(totalMoney))
+    print("Total shares: " + str(shares))
+    print("Total trades: " + str(trades))
+    print("Percent gain or loss: " + str((totalMoney/initialMoney - 1) * 100) + '%')
+
+    return(totalMoney - initialMoney)
+
+
+    
+total = 0  
+
+#total += predictMulti('A', True)
+#total += predictMulti('AAPL', True)
+#total += predictMulti('AMD', True)
+#total += predictMulti('NVDA', True)
+#total += predictMulti('IBM', True)
+
+#print("Total profit: " + str(total))
+
+predictMulti('AMD', True)
+
