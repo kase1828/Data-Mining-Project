@@ -164,6 +164,7 @@ def predictPrice(stockName, attribute, modelName):
     plt.legend()
     plt.title("Predicting: " + stockName)
 
+    plt.savefig(stockName + '_by_' + attribute + '.jpg')
     plt.show()
 
 
@@ -171,9 +172,13 @@ def predictPrice(stockName, attribute, modelName):
 
 
 
-getModelTrain('sp_20yr','close', 75, 64)
 
-#predictPrice('AAPL', 'close', 'sp_20yr_by_close')
+
+
+
+#getModelTrain('A','close', 75, 64)
+
+predictPrice('AAPL', 'close', 'sp_20yr_by_close')
 
 
 

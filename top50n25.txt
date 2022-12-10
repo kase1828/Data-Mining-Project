@@ -1,0 +1,207 @@
+Stock: AAL 
+Prediction percentage: 53.35365853658537 
+2.4950000000000028% profit 
+ 
+Stock: AAPL 
+Prediction percentage: 50.91575091575091 
+1.0769999999999946% profit 
+ 
+Stock: ABBV 
+Prediction percentage: 55.44217687074829 
+-5.391999999999975% profit 
+ 
+Stock: AMAT 
+Prediction percentage: 53.79310344827586 
+-3.563000000000016% profit 
+ 
+Stock: AMD 
+Prediction percentage: 48.16326530612245 
+1.438499999999987% profit 
+ 
+Stock: ATVI 
+Prediction percentage: 61.03448275862069 
+16.047000000000054% profit 
+ 
+Stock: BAC 
+Prediction percentage: 57.66129032258065 
+0.35600000000004517% profit 
+ 
+Stock: BBY 
+Prediction percentage: 55.718475073313776 
+-1.8149999999999777% profit 
+ 
+Stock: BMY 
+Prediction percentage: 48.74551971326165 
+-3.6269999999999802% profit 
+ 
+Stock: C 
+Prediction percentage: 51.736111111111114 
+1.1400000000000077% profit 
+ 
+Stock: CBS 
+Prediction percentage: 48.679245283018865 
+0.3080000000000416% profit 
+ 
+Stock: CFG 
+Prediction percentage: 56.45933014354066 
+4.700999999999977% profit 
+ 
+Stock: CHK 
+Prediction percentage: 45.955882352941174 
+1.088% profit 
+ 
+Stock: CMCSA 
+Prediction percentage: 53.214285714285715 
+5.1149999999999585% profit 
+ 
+Stock: COTY 
+Prediction percentage: 49.54128440366973 
+-4.856000000000016% profit 
+ 
+Stock: CSCO 
+Prediction percentage: 54.59183673469388 
+3.1870000000000287% profit 
+ 
+Stock: CSX 
+Prediction percentage: 52.980132450331126 
+1.523999999999992% profit 
+ 
+Stock: DAL 
+Prediction percentage: 51.66051660516605 
+1.2140000000000262% profit 
+ 
+Stock: DRE 
+Prediction percentage: 50.35460992907801 
+1.7469999999999652% profit 
+ 
+Stock: DVN 
+Prediction percentage: 50.955414012738856 
+-8.049000000000007% profit 
+ 
+Stock: F 
+Prediction percentage: 50.69252077562327 
+4.312999999999967% profit 
+ 
+Stock: FB 
+Prediction percentage: 55.048859934853425 
+1.4319999999999888% profit 
+ 
+Stock: FCX 
+Prediction percentage: 48.484848484848484 
+-1.7939999999999845% profit 
+ 
+Stock: FOXA 
+Prediction percentage: 44.72361809045226 
+-1.916999999999991% profit 
+ 
+Stock: GE 
+Prediction percentage: 46.27450980392157 
+-1.5502999999999822% profit 
+ 
+Stock: GGP 
+Prediction percentage: 48.188405797101446 
+-2.053999999999978% profit 
+ 
+Stock: GLW 
+Prediction percentage: 55.42521994134897 
+9.702999999999973% profit 
+ 
+Stock: GM 
+Prediction percentage: 54.22740524781341 
+-3.0589999999999895% profit 
+ 
+Stock: HBAN 
+Prediction percentage: 59.40959409594095 
+1.7849999999999921% profit 
+ 
+Stock: HCA 
+Prediction percentage: 55.36332179930796 
+3.9859999999999562% profit 
+ 
+Stock: INTC 
+Prediction percentage: 53.453453453453456 
+1.5170000000000128% profit 
+ 
+Stock: KMI 
+Prediction percentage: 44.57364341085272 
+-0.0160000000000049% profit 
+ 
+Stock: KR 
+Prediction percentage: 51.651651651651655 
+0.8674999999999988% profit 
+ 
+Stock: MGM 
+Prediction percentage: 54.36241610738255 
+-4.650999999999971% profit 
+ 
+Stock: MRO 
+Prediction percentage: 45.38461538461539 
+5.937999999999954% profit 
+ 
+Stock: MSFT 
+Prediction percentage: 52.55474452554745 
+3.9959999999999996% profit 
+ 
+Stock: MU 
+Prediction percentage: 51.31195335276968 
+2.032999999999996% profit 
+ 
+Stock: NFLX 
+Prediction percentage: 51.40562248995983 
+7.814000000000054% profit 
+ 
+Stock: NVDA 
+Prediction percentage: 55.88235294117647 
+0.9289999999999798% profit 
+ 
+Stock: ORCL 
+Prediction percentage: 47.54716981132076 
+-1.7739999999999978% profit 
+ 
+Stock: PFE 
+Prediction percentage: 46.25550660792951 
+-2.7529999999999943% profit 
+ 
+Stock: PG 
+Prediction percentage: 50.719424460431654 
+-2.950000000000008% profit 
+ 
+Stock: QCOM 
+Prediction percentage: 55.42521994134897 
+3.8000000000000034% profit 
+ 
+Stock: SYF 
+Prediction percentage: 45.21276595744681 
+3.729999999999989% profit 
+ 
+Stock: T 
+Prediction percentage: 49.691358024691354 
+-6.972039999999991% profit 
+ 
+Stock: UAA 
+Prediction percentage: 51.24653739612188 
+-6.277999999999972% profit 
+ 
+Stock: V 
+Prediction percentage: 58.75 
+-1.8910000000000426% profit 
+ 
+Stock: VZ 
+Prediction percentage: 52.20125786163522 
+2.463000000000015% profit 
+ 
+Stock: WBA 
+Prediction percentage: 55.88235294117647 
+-6.41799999999999% profit 
+ 
+Stock: WFC 
+Prediction percentage: 49.668874172185426 
+1.4530000000000154% profit 
+ 
+Average profit for top 50 S&P companies: 0.5163532000000024 % 
+Minimum profit for top 50 S&P companies: -8.049000000000007 % 
+Maximum profit for top 50 S&P companies: 16.047000000000054 % 
+Total profit for top 50 S&P companies: 25.817660000000117 % 
+Total runtime: 5.059477631251017 minutes 
+Average runtime: 6.07137315750122 seconds 
+Money made: 258.17660000000114$ 

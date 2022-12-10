@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import time as time
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
@@ -8,7 +9,7 @@ from keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense, Dropout
 from datetime import datetime
 
-def backtest(data, model, predictors, start=7, step=2):
+def backtest(data, model, predictors, start=7, step=5): #step < 5 gives bad results
     predictions = []
     # Loop over the dataset in increments
     for i in range(start, data.shape[0], step):
@@ -37,13 +38,14 @@ def backtest(data, model, predictors, start=7, step=2):
 #string stockName: name of the stock to read data from
 #bool indv: If true, it will read from the indv stocks, if false it will read from data
 def predictMulti(stockName, indv):
+    st = time.time()
     if(indv):
         df = pd.read_csv('data/indv/' + stockName + '_data.csv')
     else:
         df = pd.read_csv('data/' + stockName)
-
+    print("Stock: " + stockName)
     df.set_index("date", inplace=True)
-
+    df = df.drop(columns=['Name'])
     #Test shifting data#
     data = df[["close"]]
     data = data.rename(columns = {'close':'Actual_Close'})
@@ -74,8 +76,8 @@ def predictMulti(stockName, indv):
     data["low_close_ratio"] = data["low"] / data["close"]
 
 
-    print("Full data: ")
-    print(data)
+    #print("Full data: ")
+    #print(data)
     
     
     full_predictors = predictors + ["weekly_mean", "quarterly_mean", "open_close_ratio", "high_close_ratio", "low_close_ratio", "weekly_trend"]
@@ -87,7 +89,7 @@ def predictMulti(stockName, indv):
     dataset_train = data.iloc[:-100]
     dataset_test = data.iloc[-100:]
 
-    model = RandomForestClassifier(n_estimators=300, min_samples_split=2, random_state=1)
+    model = RandomForestClassifier(n_estimators=25, min_samples_split=2, random_state=1) # n > 100 gives bad results
 
     
     model.fit(dataset_train[model_predictors], dataset_train["Target"]) ##
@@ -99,25 +101,24 @@ def predictMulti(stockName, indv):
     preds = pd.Series(preds, index=dataset_test.index)
     precision_score(dataset_test["Target"], preds)
 
-    print(precision_score(dataset_test["Target"], preds))
+    #print(precision_score(dataset_test["Target"], preds))
 
     
     predictions = backtest(data.iloc[90:], model, full_predictors)
     
 
     
-    print("Prediction percentage after backtesting:")
-    print(precision_score(predictions["Target"], predictions["Predictions"]) * 100)
-
-    print(predictions["Predictions"].value_counts())
-
+    print("Prediction percentage: " + str(precision_score(predictions["Target"], predictions["Predictions"]) * 100))
+    #print(precision_score(predictions["Target"], predictions["Predictions"]) * 100)
+    #print(predictions["Predictions"].value_counts())
+    
 
     
 
     predictors += ['Actual_Close']
 
     #predictions = predictions.join(data[predictors])
-    print(predictions)
+    #print(predictions)
     predictions = predictions.join(dataset_test[predictors])
     
     initialMoney = 1000
@@ -130,13 +131,13 @@ def predictMulti(stockName, indv):
     #print(dataset_test)
     #print(sell)
 
-    print(sell)
+    #print(sell)
 
 
 
     for i in range(len(sell)):
-        if(i % 5 == 0):
-            print("Total money: " + str(totalMoney))
+        # if(i % 5 == 0):
+        #     print("Total money: " + str(totalMoney))
         if(sell.iloc[i, 1] == 1.0):
             money = totalMoney // 2
             tradeNow = money // sell.iloc[i,0]
@@ -166,18 +167,69 @@ def predictMulti(stockName, indv):
 
     
 
-    print("Initial money: " + str(initialMoney))
-    print("Total money: " + str(totalMoney))
-    print("Total shares: " + str(shares))
-    print("Total trades: " + str(trades))
-    print("Percent gain or loss: " + str((totalMoney/initialMoney - 1) * 100) + '%')
-    print("Trading days: " + str(days))
+    # print("Initial money: " + str(initialMoney))
+    # print("Total money: " + str(totalMoney))
+    # print("Total shares: " + str(shares))
+    # print("Total trades: " + str(trades))
+    # print("Percent gain or loss: " + str((totalMoney/initialMoney - 1) * 100) + '%')
+    # print("Trading days: " + str(days))
+    et = time.time()
+    totalTime = et - st
 
-    return(totalMoney - initialMoney)
+    file1 = open("top50n25.txt", "a")
+    line = ["Stock: " + stockName + " \n","Prediction percentage: " + str(precision_score(predictions["Target"], predictions["Predictions"]) * 100) +" \n", str((totalMoney/initialMoney - 1) * 100) + "% profit \n", " \n"]
+    file1.writelines(line)
+    file1.close()
+
+    print("Total time: " + str(totalTime) + " seconds")
+    return((totalMoney/initialMoney - 1) * 100)
+
+top50SP = ['AAL','AAPL','ABBV','AMAT','AMD','ATVI','BAC','BBY','BMY','C','CBS','CFG','CHK','CMCSA','COTY','CSCO','CSX','DAL','DRE','DVN','F','FB',
+'FCX','FOXA','GE','GGP','GLW','GM','HBAN','HCA','INTC','KMI','KR','MGM','MRO','MSFT','MU','NFLX','NVDA','ORCL','PFE','PG','QCOM','SYF','T','UAA',
+'V','VZ','WBA','WFC']
 
 
-    
+
+def runTop50(stockNames):
+    st = time.time()
+    maxProfit = 0
+    minProfit = 0
+    totalProfit = 0
+    averageProfit = 0
+    for i in stockNames:
+        currentProfit = predictMulti(i, True)
+        totalProfit += currentProfit
+        if(currentProfit > maxProfit):
+            maxProfit = currentProfit
+        if(currentProfit < minProfit):
+            minProfit = currentProfit
+        print(str(currentProfit) + '% profit')
+        print('')
+
+    averageProfit = totalProfit / len(stockNames)
+    et = time.time()
+    totalTime = et - st
+    avgTime = totalTime / len(stockNames)
+    return(averageProfit, minProfit, maxProfit, totalProfit, totalTime, avgTime)
+
+        
+avgP, minP, maxP, totalP, totT, avgT = runTop50(top50SP)
+
+file2 = open("top50n25.txt", "a")
+line2 = ["Average profit for top 50 S&P companies: " + str(avgP) + " % \n", "Minimum profit for top 50 S&P companies: " + str(minP) + " % \n", 
+"Maximum profit for top 50 S&P companies: " + str(maxP) + " % \n", "Total profit for top 50 S&P companies: " + str(totalP) + " % \n", 
+"Total runtime: " + str(totT / 60) + " minutes \n", "Average runtime: " + str(avgT) + " seconds \n", "Money made: " + str((((totalP / 100) + 1) * 1000) - 1000) + "$ \n"]
+file2.writelines(line2)
+file2.close()
+
+print("Average profit for top 50 S&P companies: " + str(avgP) + " %")
+print("Minimum profit for top 50 S&P companies: " + str(minP) + " %")
+print("Maximum profit for top 50 S&P companies: " + str(maxP) + " %")
+print("Total profit for top 50 S&P companies: " + str(totalP) + " %")
+print("Total runtime: " + str(totT / 60) + " minutes")
+print("Average runtime: " + str(avgT) + " seconds")
+print("Money made: " + str((((totalP / 100) + 1) * 1000) - 1000))
 
 
-predictMulti('AMD', True)
+#predictMulti('AAL', True)
 
