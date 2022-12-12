@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import pickle as pkl
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential, load_model
 from keras.layers import LSTM, Dense, Dropout
